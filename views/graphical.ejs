@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/mystyle.css">
+  <title>MFA prototype</title>
+</head>
+
+<body>
+  <!-- <script type="module" src="graphical.js"></script>  -->
+  <script>
+    var numberOfPicsSelected = 0 //to check when hit 4 selected
+    var paswordNumbers = [] //array for selected id
+    var allPics
+    var sendbtn
+    document.addEventListener('DOMContentLoaded', (event) => {
+      allPics = document.getElementById("pictures")
+      sendbtn = document.getElementById("sendGp")
+
+      // event listener for all images
+      allPics.addEventListener('click', (e) => {
+        //if already selected, remove border and from array
+        if (e.target.style.border === "3px solid yellow") {
+          e.target.style.border = "none"
+          removeSelection(e.target.id)
+          numberOfPicsSelected--;
+        } else {
+          e.target.style.border = "3px solid yellow"
+          paswordNumbers.push(e.target.id)
+          numberOfPicsSelected++;
+        }
+
+        //console.log("number of Selected: ", numberOfPicsSelected)
+        // if(numberOfPicsSelected===4){postGP('http://localhost:3000/gp', {paswordNumbers})}
+        if (numberOfPicsSelected === 4) { console.log("number of Selected: ", numberOfPicsSelected) }
+
+      });
+
+      //need to add some more logic for sending less or more images? 
+      sendbtn.addEventListener('click', async () => {
+        await postGP('http://localhost:3000/graphical', { paswordNumbers: paswordNumbers })
+      })
+      // document.querySelector('form').addEventListener('submit', async () => {
+      //           await postGP('http://localhost:3000/graphical', { paswordNumbers: paswordNumbers })
+      //       })
+    })
+
+
+    // overcomplicated removal for a selection
+    function removeSelection(id) {
+      for (var i = 0; i < paswordNumbers.length; i++) {
+        if (paswordNumbers[i] === id) {
+          paswordNumbers.splice(i, 1)
+        }
+      }
+      console.log('got in remove', paswordNumbers)
+    }
+
+    // same logic ish as fingerprinting.js
+    async function postGP(url, body) {
+      const data = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+      console.log('the data being posted to, ', url, 'is the following: ', data)
+      const response = await fetch(url, data)
+      // This if statement makes the redirect functional
+      if (response.redirected) {
+        console.log('redirecting here ',response.url )
+        window.location.href = response.url;
+      }
+      if (!response.ok) {
+        const data = await response.json()
+        console.log(response)
+        console.log(JSON.stringify(data, null, 4))
+        throw new Error(`HTTP error! status: ${response.status}`)
+      } else {
+        console.log('the response was OK')
+      }
+      return response
+    }</script>
+  <script onload="initGraphical()"></script>
+  <h1>BITS PILANI Security</h1>
+  <div class="background">
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+  <form>
+ <h4>Select your graphical tokens:</h4>
+
+  <div id="pictures">
+    <div class="row">
+      <img src="\graphicalImages\pixil-frame-0.png" id="0">
+      <img src="\graphicalImages\pixil-frame-1.png" id="1">
+      <img src="\graphicalImages\pixil-frame-2.png" id="2">
+      <img src="\graphicalImages\pixil-frame-3.png" id="3">
+
+    </div>
+    <div class="row">
+      <img src="\graphicalImages\pixil-frame-4.png" id="4">
+      <img src="\graphicalImages\pixil-frame-5.png" id="5">
+      <img src="\graphicalImages\pixil-frame-6.png" id="6">
+      <img src="\graphicalImages\pixil-frame-7.png" id="7">
+    </div>
+    <div class="row">
+      <img src="\graphicalImages\pixil-frame-8.png" id="8">
+      <img src="\graphicalImages\pixil-frame-9.png" id="9">
+      <img src="\graphicalImages\pixil-frame-10.png" id="10">
+      <img src="\graphicalImages\pixil-frame-11.png" id="11">
+    </div>
+    <div class="row">
+      <img src="\graphicalImages\pixil-frame-12.png" id="12">
+      <img src="\graphicalImages\pixil-frame-13.png" id="13">
+      <img src="\graphicalImages\pixil-frame-14.png" id="14">
+      <img src="\graphicalImages\pixil-frame-15.png" id="15">
+    </div>
+  </div>
+
+  <button type="button" id="sendGp">Send</button>
+  <!-- <button type="submit" id="sendGp">Send</button> -->
+  <!-- <div><a href="/register">Register</a></div> -->
+  <div><a href="/register">Forgot your graphical password?</a></div>
+
+</form>
+
+</body>
+
+</html>

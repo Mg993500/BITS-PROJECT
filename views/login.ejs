@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/mystyle.css">
+    <title>MFA prototype</title>
+</head>
+
+<body>
+    <!-- <script type="module" src="fingerprinting.js"></script>
+    <script async src="//cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script> -->
+    <script>async function initFingerprintJS() {
+        
+            const fp = await FingerprintJS.load()
+            const result = await fp.get()
+            var start = window.performance.now()
+            // Exclude a couple components
+            const { audio, colorDepth, colorGamut, contrast, cookiesEnabled, cpuClass, deviceMemory, domBlockers, fontPreferences, fonts, forcedColors, hardwareConcurrency, hdr,
+                indexedDB, invertedColors, languages, localStorage, math, monochrome, openDatabase, osCpu, platform, plugins, reducedMotion, screenFrame, screenResolution, sessionStorage,
+                timezone, touchSupport, vendor, vendorFlavors, ...components } = result.components
+
+            // Make a visitor identifier from your custom list of components
+            const visitorId = FingerprintJS.hashComponents(components)
+            var end = window.performance.now()
+            console.log('visitorId:', visitorId)
+            console.log(`Execution time: ${end - start} ms`)
+
+            document.querySelector('form').addEventListener('submit', async () => {
+                console.log('Visitor ID when submitting: ', visitorId)
+                await postFP('http://localhost:3000/fp', { fingerprintJS: visitorId })
+            });
+        }
+
+        async function postFP(url, body) {
+            const data = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }
+            console.log('the data being posted to, ', url, 'is the following: ', data)
+            const response = await fetch(url, data)
+            console.log('Response in fp thing', response)
+            if (!response.ok) {
+                const data = await response.json()
+
+                console.log(response)
+                console.log(JSON.stringify(data, null, 4))
+
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            return response
+        }</script>
+    <script async src="//cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+        onload="initFingerprintJS()"></script>
+
+
+
+        <div class="header">
+            
+            <h1>BITS PILANI</h1>
+        </div>
+        
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+   
+    <form action="/login" method="POST" id="loginForm">
+        <h2>Sign in to BITS PILANI</h2> 
+        <div>
+            <label for="email">Username</label>
+            <input type="email" placeholder="Email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+        </div>
+        <button type="submit">Login</button> 
+
+        <div><a href="/register">Register</a></div>
+        <div><a href="/register">Forgot your password?</a></div>
+      
+    </form>
+<div class="feedback">  <h2>
+    <%= messages %>
+</h2></div>
+    
+    
+     
+    <!-- <img class="logo" src="/Logo.png" alt="logo"> -->
+</body>
+
+
+</html>

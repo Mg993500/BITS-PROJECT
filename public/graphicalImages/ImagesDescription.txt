@@ -1,0 +1,1 @@
+Images are all pixel art from https://www.pixilart.com/ stamp feature, with a 50x50 frame, and then widened to the edge of the frame. 
